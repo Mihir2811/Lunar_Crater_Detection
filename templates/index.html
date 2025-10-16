@@ -2,123 +2,159 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>YOLOv8 Object Detection</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MoonCrunch | Lunar Crater Detection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
     <style>
-        /* Reset & base styles */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        .file-upload {
+            transition: all 0.3s ease;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(to right, #eef2f3, #8e9eab);
-            color: #333;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
+        .file-upload:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
         }
-
-        .container {
+        #vanta-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 800px;
-            background: #fff;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            text-align: center;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.3;
         }
-
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 20px;
-            color: #222;
+        .glow-text {
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
         }
-
-        form {
-            margin: 30px 0;
+        .result-card {
+            backdrop-filter: blur(16px);
+            background-color: rgba(255, 255, 255, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        input[type="file"] {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 16px;
-            background-color: #f9f9f9;
-            width: 100%;
-            max-width: 400px;
-            transition: border-color 0.3s ease;
-        }
-
-        input[type="file"]:hover {
-            border-color: #007bff;
-        }
-
-        button {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            font-size: 1rem;
-            margin-top: 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #0056b3;
-        }
-
-        .result-section {
-            margin-top: 40px;
-        }
-
-        .result-section h2 {
-            font-size: 1.8rem;
-            color: #444;
-            margin-bottom: 15px;
-        }
-
-        .result-section img {
-            max-width: 100%;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 2rem;
-            }
-
-            input[type="file"] {
-                font-size: 0.9rem;
-            }
-
-            button {
-                font-size: 0.95rem;
-                padding: 10px 20px;
-            }
+        .result-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <h1>YOLOv8 Object Detection</h1>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <input type="file" name="image" required>
-            <br>
-            <button type="submit">Upload & Detect</button>
-        </form>
+<body class="bg-gray-900 text-white min-h-screen flex flex-col">
+    <div id="vanta-bg"></div>
+    
+    <header class="py-12 px-4 text-center">
+        <h1 class="text-5xl font-bold mb-4 glow-text">
+            <span class="text-indigo-400">Moon</span><span class="text-blue-300">Crunch</span>
+        </h1>
+        <p class="text-xl text-blue-200 max-w-2xl mx-auto">
+            Detect lunar craters with precision
+        </p>
+        <div class="mt-6">
+            <i data-feather="moon" class="w-12 h-12 text-yellow-200 mx-auto"></i>
+        </div>
+    </header>
 
+    <main class="flex-grow container mx-auto px-4">
+        <div class="max-w-3xl mx-auto bg-gray-800 bg-opacity-60 rounded-2xl p-8 shadow-xl">
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-semibold mb-2 text-blue-100">Upload Your Lunar Image</h2>
+                <p class="text-blue-300">We'll scan for craters and provide detailed analysis</p>
+            </div>
+
+            <!-- ✅ Flask form integration -->
+            <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-6">
+                <div class="file-upload relative border-2 border-dashed border-blue-400 rounded-xl p-12 text-center cursor-pointer hover:border-blue-300 transition-all duration-300">
+                    <input type="file" name="image" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" required>
+                    <div class="space-y-3">
+                        <i data-feather="upload-cloud" class="w-12 h-12 mx-auto text-blue-300"></i>
+                        <h3 class="text-lg font-medium text-blue-100">Drag & Drop or Click to Browse</h3>
+                        <p class="text-sm text-blue-400">Supports JPG, PNG up to 10MB</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-700 bg-opacity-50 rounded-xl p-6">
+                    <label for="confidence" class="block text-sm font-medium text-blue-100 mb-3">Detection Sensitivity</label>
+                    <div class="flex items-center space-x-4">
+                        <input type="range" id="confidence" name="confidence" min="0.1" max="1.0" step="0.05" value="0.5" 
+                               class="w-full h-2 bg-blue-900 rounded-lg appearance-none cursor-pointer">
+                        <span id="confValue" class="text-blue-300 font-mono w-16 text-center">0.5</span>
+                    </div>
+                    <div class="flex justify-between text-xs text-blue-400 mt-1">
+                        <span>Low Precision</span>
+                        <span>High Precision</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-xl font-medium hover:from-indigo-700 hover:to-blue-600 transition-all duration-300 flex items-center justify-center space-x-2">
+                    <i data-feather="search" class="w-5 h-5"></i>
+                    <span>Analyze Lunar Surface</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- ✅ Dynamic Results Section -->
         {% if image_path %}
-        <div class="result-section">
-            <h2>Detection Result</h2>
-            <img src="{{ url_for('static', filename='output.jpg') }}" alt="Detected Image">
+        <div class="max-w-4xl mx-auto mt-16" id="results">
+            <div class="result-card rounded-2xl overflow-hidden border border-blue-800 border-opacity-50">
+                <div class="bg-gray-800 bg-opacity-70 p-6">
+                    <h3 class="text-xl font-semibold text-blue-100 flex items-center">
+                        <i data-feather="target" class="w-5 h-5 mr-2"></i>
+                        Detection Results
+                    </h3>
+                </div>
+
+                <div class="p-6 border-t border-blue-900 border-opacity-50">
+                    <div class="rounded-lg overflow-hidden border border-blue-900">
+                        <img src="{{ image_path }}" alt="Lunar surface with detected craters" class="w-full">
+                    </div>
+                    <div class="flex flex-wrap gap-4 mt-6">
+                        <a href="{{ image_path.split('?')[0] }}" download class="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-center flex items-center justify-center space-x-2 transition-colors">
+                            <i data-feather="download" class="w-4 h-4"></i>
+                            <span>Download Image</span>
+                        </a>
+                        {% if json_path %}
+                        <a href="{{ json_path }}" download class="flex-1 py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-center flex items-center justify-center space-x-2 transition-colors">
+                            <i data-feather="file-text" class="w-4 h-4"></i>
+                            <span>JSON Data</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
         </div>
         {% endif %}
-    </div>
+    </main>
+
+    <footer class="py-8 text-center text-blue-400 text-sm">
+        <div class="container mx-auto px-4">
+            <p class="mb-2">A Celestial Project Developed for SAC, ISRO</p>
+            <p>Developed with <i data-feather="heart" class="w-4 h-4 inline text-pink-400"></i> by Mihir Panchal</p>
+        </div>
+    </footer>
+
+    <script>
+        // Initialize Vanta.js
+        VANTA.GLOBE({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x3a86ff,
+            backgroundColor: 0x111827,
+            size: 0.8
+        });
+
+        // Confidence slider display
+        document.getElementById('confidence').addEventListener('input', function() {
+            document.getElementById('confValue').textContent = this.value;
+        });
+
+        // Feather icons
+        feather.replace();
+    </script>
 </body>
 </html>
