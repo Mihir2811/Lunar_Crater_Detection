@@ -2,6 +2,8 @@
 
 A web-based application that uses YOLOv8 deep learning model to detect and analyze lunar craters in uploaded images. Built for SAC, ISRO.
 
+Presentation - https://www.youtube.com/watch?v=P0vyWb0eBXU
+
 ## Features
 
 - **Real-time Crater Detection**: Upload lunar surface images and get instant crater detection results
