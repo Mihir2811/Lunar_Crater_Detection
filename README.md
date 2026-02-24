@@ -1,119 +1,113 @@
-# Lunar Crater Detection
+# Lunar Crater Detection System
 
-A web-based application that uses YOLOv8 deep learning model to detect and analyze lunar craters in uploaded images. Built for SAC, ISRO.
+Web-based application for automated detection and analysis of lunar craters using YOLOv8 deep learning model. Developed for Space Applications Centre (SAC), Indian Space Research Organisation (ISRO).
 
-Presentation - https://www.youtube.com/watch?v=P0vyWb0eBXU
+## System Capabilities
 
-## Features
+- Crater detection from uploaded lunar surface imagery
+- Configurable confidence threshold (range: 0.1 to 1.0)
+- Annotated output images with bounding box visualization
+- JSON format data export for detection results
+- Web-based user interface
+- Application logging and monitoring
 
-- **Real-time Crater Detection**: Upload lunar surface images and get instant crater detection results
-- **Adjustable Confidence Threshold**: Fine-tune detection sensitivity with a slider (0.1 to 1.0)
-- **Visual Results**: View annotated images with detected craters highlighted in bounding boxes
-- **Data Export**: Download processed images and detection data in JSON format
-- **Modern Web Interface**: Responsive design with interactive 3D background
-- **Comprehensive Logging**: Detailed application logs for monitoring and debugging
+## Technical Specifications
 
-## Technology Stack
+- Backend Framework: Flask (Python)
+- Machine Learning Model: YOLOv8 (Ultralytics)
+- Image Processing: OpenCV
+- Frontend: HTML5, CSS, JavaScript
 
-- **Backend**: Flask (Python web framework)
-- **Machine Learning**: YOLOv8 (Ultralytics)
-- **Computer Vision**: OpenCV
-- **Frontend**: HTML5, Tailwind CSS, JavaScript
-- **3D Graphics**: Vanta.js for interactive background
-- **Icons**: Feather Icons
-
-## Installation
-
-### Prerequisites
+## System Requirements
 
 - Python 3.7 or higher
 - pip package manager
 
-### Setup
+## Installation Procedure
 
-1. Clone the repository:
+1. Clone repository:
 ```bash
 git clone <repository-url>
 cd Lunar_Crater_Detection
 ```
 
-2. Install required dependencies:
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-3. Ensure you have the trained YOLOv8 model:
-   - Place your trained model file in the `Models/` directory
-   - Update the `MODEL_PATH` in `detect.py` if using a different model name
+3. Model configuration:
+   - Place trained model file in Models/ directory
+   - Update MODEL_PATH in detect.py as required
 
-## Usage
+## Operation Instructions
 
-### Running the Application
+### Starting the Application
 
-1. Start the Flask development server:
+1. Execute the following command:
 ```bash
 python app.py
 ```
 
-2. Open your web browser and navigate to:
+2. Access the application at:
 ```
 http://localhost:5000
 ```
 
-### Using the Web Interface
+### Operating Procedure
 
-1. **Upload Image**: Click the upload area or drag and drop a lunar surface image
-2. **Adjust Sensitivity**: Use the confidence slider to set detection threshold
-3. **Analyze**: Click "Analyze Lunar Surface" to process the image
-4. **View Results**: See detected craters highlighted with bounding boxes
-5. **Download**: Save the annotated image and JSON detection data
+1. Upload lunar surface image file
+2. Set confidence threshold using slider control
+3. Execute analysis by clicking "Analyze Lunar Surface"
+4. Review detection results with bounding box annotations
+5. Download annotated image and JSON data as required
 
-### Supported Image Formats
+### Supported File Formats
 
 - JPEG (.jpg, .jpeg)
 - PNG (.png)
 - Maximum file size: 10MB
 
-## Project Structure
+## Directory Structure
 
 ```
 Lunar_Crater_Detection/
-├── Models/                 # Trained YOLOv8 models
-│   ├── yolov8_model.pt    # Main trained model
-│   └── yolov8n.pt         # Base YOLOv8 nano model
-├── static/                # Generated output files
+├── Models/                 # Trained model files
+│   ├── yolov8_model.pt    # Primary trained model
+│   └── yolov8n.pt         # Base YOLOv8 model
+├── static/                # Output files
 ├── templates/             # HTML templates
-│   └── index.html         # Main web interface
-├── uploads/               # Uploaded user images
-├── app.py                 # Flask web application
-├── detect.py              # YOLOv8 detection logic
-├── requirements.txt       # Python dependencies
-├── .gitignore            # Git ignore rules
-└── README.md             # Project documentation
+│   └── index.html         # Web interface
+├── uploads/               # User uploaded images
+├── app.py                 # Flask application
+├── detect.py              # Detection module
+├── requirements.txt       # Dependencies
+├── .gitignore            # Git configuration
+└── README.md             # Documentation
 ```
 
-## API Endpoints
+## API Specification
 
 ### GET /
-- **Description**: Main application page
-- **Returns**: HTML interface for image upload
+- Description: Main application interface
+- Returns: HTML page
 
 ### POST /upload
-- **Description**: Process uploaded image for crater detection
-- **Parameters**:
-  - `image`: Image file (multipart/form-data)
-  - `confidence`: Detection confidence threshold (0.1-1.0)
-- **Returns**: HTML page with detection results
+- Description: Image processing endpoint
+- Parameters:
+  - image: Image file (multipart/form-data)
+  - confidence: Threshold value (0.1-1.0)
+- Returns: HTML page with results
 
-## Detection Output
+## Output Specification
 
 ### Annotated Image
-- Original image with green bounding boxes around detected craters
-- Confidence scores displayed for each detection
-- Saved in `static/` directory with unique filename
+- Input image with bounding boxes indicating detected craters
+- Confidence scores for each detection
+- Saved in static/ directory
 
 ### JSON Data
-Contains detailed detection information:
+Detailed detection information:
 ```json
 {
     "image_path": "path/to/uploaded/image.jpg",
@@ -135,67 +129,57 @@ Contains detailed detection information:
 }
 ```
 
-## Configuration
+## Configuration Parameters
 
-### Model Configuration
-- Update `MODEL_PATH` in `detect.py` to use different trained models
-- Adjust `box_thickness` parameter for bounding box appearance
+### Model Settings
+- MODEL_PATH in detect.py: Specify model file location
+- box_thickness: Bounding box line width
 
-### Logging Configuration
-- Logs are saved to `app.log`
-- Adjust logging levels in `app.py` (DEBUG, INFO, WARNING, ERROR)
+### Logging Settings
+- Log file: app.log
+- Logging levels: DEBUG, INFO, WARNING, ERROR (configurable in app.py)
 
-## Development
+## Development Guidelines
 
-### Adding New Features
-1. Backend logic: Modify `app.py` or `detect.py`
-2. Frontend changes: Update `templates/index.html`
-3. Styling: Modify Tailwind CSS classes in the HTML template
+### Modification Procedures
+1. Backend modifications: app.py or detect.py
+2. Frontend modifications: templates/index.html
+3. Styling modifications: CSS classes in HTML template
 
-### Model Training
-To use a custom trained model:
-1. Train your YOLOv8 model on lunar crater dataset
-2. Save the model as `.pt` file in `Models/` directory
-3. Update `MODEL_PATH` in `detect.py`
+### Custom Model Integration
+1. Train YOLOv8 model on lunar crater dataset
+2. Save model as .pt file in Models/ directory
+3. Update MODEL_PATH in detect.py
 
 ## Troubleshooting
 
 ### Common Issues
 
-1. **Model not found**: Ensure the model file exists in the `Models/` directory
-2. **Upload fails**: Check file size (max 10MB) and format (JPG/PNG)
-3. **Detection errors**: Verify image quality and adjust confidence threshold
-4. **Port conflicts**: Change the port in `app.run()` if 5000 is occupied
+1. Model not found: Verify model file exists in Models/ directory
+2. Upload failure: Verify file size (maximum 10MB) and format (JPG/PNG)
+3. Detection errors: Verify image quality and adjust confidence threshold
+4. Port conflicts: Modify port number in app.run() if port 5000 is unavailable
 
-### Logs
-Check `app.log` for detailed error messages and application behavior.
+### Log Files
+Refer to app.log for error messages and application status.
 
-## Performance Considerations
+## Performance Notes
 
-- **Image Size**: Larger images take longer to process
-- **Confidence Threshold**: Lower values detect more objects but may include false positives
-- **Model Size**: Larger models provide better accuracy but slower inference
-
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+- Image Size: Processing time increases with image dimensions
+- Confidence Threshold: Lower values increase detection count and false positive rate
+- Model Size: Larger models improve accuracy with increased processing time
 
 ## License
 
-This project is developed for SAC, ISRO. Please refer to the organization's licensing terms.
+Developed for Space Applications Centre (SAC), Indian Space Research Organisation (ISRO). Refer to organizational licensing terms.
 
 ## Author
 
-**Mihir Panchal**  
-Developed for Space Applications Centre (SAC), ISRO
+Mihir Panchal
 
 ## Acknowledgments
 
-- ISRO Space Applications Centre for project guidance
-- Ultralytics for YOLOv8 framework
-- OpenCV community for computer vision tools
-- Flask development team for the web framework
+- Space Applications Centre (SAC), ISRO
+- Ultralytics YOLOv8 framework
+- OpenCV library
+- Flask framework
