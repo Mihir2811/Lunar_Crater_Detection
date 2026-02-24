@@ -5,156 +5,961 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MoonCrunch | Lunar Crater Detection</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <script src="https://unpkg.com/feather-icons"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.globe.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                        'mono': ['JetBrains Mono', 'monospace'],
+                    },
+                    colors: {
+                        lunar: {
+                            50: '#eef2ff',
+                            100: '#e0e7ff',
+                            200: '#c7d2fe',
+                            300: '#a5b4fc',
+                            400: '#818cf8',
+                            500: '#6366f1',
+                            600: '#4f46e5',
+                            700: '#4338ca',
+                            800: '#3730a3',
+                            900: '#312e81',
+                            950: '#1e1b4b',
+                        },
+                        cosmos: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            200: '#bae6fd',
+                            300: '#7dd3fc',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            700: '#0369a1',
+                            800: '#075985',
+                            900: '#0c4a6e',
+                            950: '#082f49',
+                        },
+                        void: {
+                            800: '#0f1729',
+                            900: '#0a0f1e',
+                            950: '#060a14',
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'float-delayed': 'float 6s ease-in-out 2s infinite',
+                        'float-slow': 'float 8s ease-in-out 1s infinite',
+                        'pulse-glow': 'pulseGlow 3s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'gradient-shift': 'gradientShift 8s ease infinite',
+                        'slide-up': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'slide-up-delayed': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.2s forwards',
+                        'slide-up-delayed-2': 'slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards',
+                        'fade-in': 'fadeIn 1s ease forwards',
+                        'scale-in': 'scaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                        'orbit': 'orbit 15s linear infinite',
+                        'twinkle': 'twinkle 3s ease-in-out infinite',
+                        'meteor': 'meteor 3s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '33%': { transform: 'translateY(-10px) rotate(1deg)' },
+                            '66%': { transform: 'translateY(-5px) rotate(-1deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.4', transform: 'scale(1)' },
+                            '50%': { opacity: '0.8', transform: 'scale(1.05)' },
+                        },
+                        gradientShift: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: '0', transform: 'translateY(40px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        scaleIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'scale(1)' },
+                        },
+                        orbit: {
+                            '0%': { transform: 'rotate(0deg) translateX(120px) rotate(0deg)' },
+                            '100%': { transform: 'rotate(360deg) translateX(120px) rotate(-360deg)' },
+                        },
+                        twinkle: {
+                            '0%, 100%': { opacity: '0.2', transform: 'scale(0.8)' },
+                            '50%': { opacity: '1', transform: 'scale(1.2)' },
+                        },
+                        meteor: {
+                            '0%': { transform: 'translateX(0) translateY(0)', opacity: '1' },
+                            '70%': { opacity: '1' },
+                            '100%': { transform: 'translateX(-300px) translateY(300px)', opacity: '0' },
+                        },
+                    },
+                    backgroundSize: {
+                        '300%': '300% 300%',
+                    },
+                    backdropBlur: {
+                        'xs': '2px',
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        .file-upload {
-            transition: all 0.3s ease;
+        * {
+            font-family: 'Inter', sans-serif;
         }
-        .file-upload:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
         }
-        #vanta-bg {
-            position: fixed;
+        ::-webkit-scrollbar-track {
+            background: #0a0f1e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4f46e5;
+            border-radius: 3px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* Animated gradient background */
+        .animated-gradient {
+            background: linear-gradient(-45deg, #0a0f1e, #1e1b4b, #0c4a6e, #0a0f1e);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        /* Glass morphism */
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(99, 102, 241, 0.15);
+        }
+
+        .glass-light {
+            background: rgba(30, 41, 59, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        /* Glow effects */
+        .glow-indigo {
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.3), 0 0 60px rgba(99, 102, 241, 0.1);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 30px rgba(99, 102, 241, 0.5), 0 0 60px rgba(99, 102, 241, 0.2);
+        }
+
+        .glow-text-sm {
+            text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+
+        /* Upload zone */
+        .upload-zone {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 2px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.5), rgba(56, 189, 248, 0.5), rgba(99, 102, 241, 0.5));
+            background-size: 200% 200%;
+            animation: gradientShift 4s ease infinite;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .upload-zone:hover::before {
+            opacity: 1;
+        }
+
+        .upload-zone:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .upload-zone.dragover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 20px 50px rgba(99, 102, 241, 0.25);
+        }
+
+        .upload-zone.dragover::before {
+            opacity: 1;
+        }
+
+        /* Range slider */
+        input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 6px;
+            border-radius: 3px;
+            background: linear-gradient(to right, #312e81, #4f46e5);
+            outline: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #818cf8, #6366f1);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
+            border: 3px solid #e0e7ff;
+            transition: all 0.2s ease;
+        }
+
+        input[type="range"]::-webkit-slider-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.7), 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #818cf8, #6366f1);
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+            border: 3px solid #e0e7ff;
+        }
+
+        /* Animated button */
+        .btn-primary {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
             top: 0;
-            left: 0;
+            left: -100%;
             width: 100%;
             height: 100%;
-            z-index: -1;
-            opacity: 0.3;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.6s ease;
         }
-        .glow-text {
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.7);
+
+        .btn-primary:hover::before {
+            left: 100%;
         }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        /* Result card */
         .result-card {
-            backdrop-filter: blur(16px);
-            background-color: rgba(255, 255, 255, 0.08);
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
+
         .result-card:hover {
-            transform: scale(1.02);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 25px 50px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Star field */
+        .star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        /* Moon illustration */
+        .moon-surface {
+            background: radial-gradient(circle at 30% 30%, #e2e8f0, #94a3b8, #64748b);
+            box-shadow: 
+                inset -15px -10px 30px rgba(0, 0, 0, 0.4),
+                0 0 40px rgba(226, 232, 240, 0.2),
+                0 0 80px rgba(226, 232, 240, 0.1);
+        }
+
+        .crater {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 40% 40%, rgba(100, 116, 139, 0.6), rgba(51, 65, 85, 0.8));
+            box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.5), inset -1px -1px 2px rgba(203, 213, 225, 0.2);
+        }
+
+        /* Status indicators */
+        .status-dot {
+            animation: pulseGlow 2s ease-in-out infinite;
+        }
+
+        /* File name display */
+        .file-name-display {
+            transition: all 0.3s ease;
+        }
+
+        /* Tooltip */
+        .tooltip-wrapper {
+            position: relative;
+        }
+
+        .tooltip-wrapper .tooltip-text {
+            visibility: hidden;
+            opacity: 0;
+            transition: all 0.3s ease;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(5px);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .tooltip-wrapper:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+            transform: translateX(-50%) translateY(-5px);
+        }
+
+        /* Loading spinner */
+        .spinner {
+            border: 3px solid rgba(99, 102, 241, 0.2);
+            border-top: 3px solid #818cf8;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Noise texture overlay */
+        .noise-overlay {
+            position: fixed;
+            inset: 0;
+            opacity: 0.03;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            z-index: 1;
+        }
+
+        /* Ensure content is above noise */
+        .content-layer {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Smooth initial load */
+        .initial-hidden {
+            opacity: 0;
         }
     </style>
 </head>
-<body class="bg-gray-900 text-white min-h-screen flex flex-col">
-    <div id="vanta-bg"></div>
-    
-    <header class="py-12 px-4 text-center">
-        <h1 class="text-5xl font-bold mb-4 glow-text">
-            <span class="text-indigo-400">Moon</span><span class="text-blue-300">Crunch</span>
-        </h1>
-        <p class="text-xl text-blue-200 max-w-2xl mx-auto">
-            Detect lunar craters with precision
-        </p>
-        <div class="mt-6">
-            <i data-feather="moon" class="w-12 h-12 text-yellow-200 mx-auto"></i>
-        </div>
-    </header>
 
-    <main class="flex-grow container mx-auto px-4">
-        <div class="max-w-3xl mx-auto bg-gray-800 bg-opacity-60 rounded-2xl p-8 shadow-xl">
-            <div class="text-center mb-8">
-                <h2 class="text-2xl font-semibold mb-2 text-blue-100">Upload Your Lunar Image</h2>
-                <p class="text-blue-300">We'll scan for craters and provide detailed analysis</p>
-            </div>
+<body class="animated-gradient text-white min-h-screen flex flex-col overflow-x-hidden">
 
-            <!-- ✅ Flask form integration -->
-            <form action="/upload" method="POST" enctype="multipart/form-data" class="space-y-6">
-                <div class="file-upload relative border-2 border-dashed border-blue-400 rounded-xl p-12 text-center cursor-pointer hover:border-blue-300 transition-all duration-300">
-                    <input type="file" name="image" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/*" required>
-                    <div class="space-y-3">
-                        <i data-feather="upload-cloud" class="w-12 h-12 mx-auto text-blue-300"></i>
-                        <h3 class="text-lg font-medium text-blue-100">Drag & Drop or Click to Browse</h3>
-                        <p class="text-sm text-blue-400">Supports JPG, PNG up to 10MB</p>
+    <!-- Noise Texture Overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Animated Star Field Background -->
+    <div id="starfield" class="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true"></div>
+
+    <!-- Floating Ambient Orbs -->
+    <div class="fixed inset-0 z-0 overflow-hidden pointer-events-none" aria-hidden="true">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-lunar-600/10 rounded-full blur-3xl animate-float"></div>
+        <div class="absolute bottom-1/3 right-1/4 w-80 h-80 bg-cosmos-600/10 rounded-full blur-3xl animate-float-delayed"></div>
+        <div class="absolute top-1/2 left-1/2 w-64 h-64 bg-purple-600/5 rounded-full blur-3xl animate-float-slow"></div>
+    </div>
+
+    <!-- Content Layer -->
+    <div class="content-layer flex flex-col min-h-screen">
+
+        <!-- Navigation Bar -->
+        <nav class="w-full py-4 px-6 glass-light fixed top-0 z-50 initial-hidden animate-slide-up">
+            <div class="max-w-7xl mx-auto flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <div class="relative">
+                        <div class="w-10 h-10 moon-surface rounded-full flex items-center justify-center">
+                            <div class="crater w-2 h-2" style="top: 25%; left: 55%;"></div>
+                            <div class="crater w-1.5 h-1.5" style="top: 55%; left: 30%;"></div>
+                            <div class="crater w-1 h-1" style="top: 40%; left: 70%;"></div>
+                        </div>
+                        <div class="absolute -top-1 -right-1 w-3 h-3 bg-green-400 rounded-full status-dot border-2 border-void-900"></div>
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold tracking-tight">
+                            <span class="text-lunar-400">Moon</span><span class="text-cosmos-300">Crunch</span>
+                        </span>
+                        <!-- <span class="hidden sm:inline-block ml-2 text-xs font-mono text-slate-500 bg-slate-800/50 px-2 py-0.5 rounded-full">v2.0</span> -->
                     </div>
                 </div>
-
-                <div class="bg-gray-700 bg-opacity-50 rounded-xl p-6">
-                    <label for="confidence" class="block text-sm font-medium text-blue-100 mb-3">Detection Sensitivity</label>
-                    <div class="flex items-center space-x-4">
-                        <input type="range" id="confidence" name="confidence" min="0.1" max="1.0" step="0.05" value="0.5" 
-                               class="w-full h-2 bg-blue-900 rounded-lg appearance-none cursor-pointer">
-                        <span id="confValue" class="text-blue-300 font-mono w-16 text-center">0.5</span>
-                    </div>
-                    <div class="flex justify-between text-xs text-blue-400 mt-1">
-                        <span>Low Precision</span>
-                        <span>High Precision</span>
-                    </div>
-                </div>
-
-                <button type="submit" class="w-full py-3 px-6 bg-gradient-to-r from-indigo-600 to-blue-500 rounded-xl font-medium hover:from-indigo-700 hover:to-blue-600 transition-all duration-300 flex items-center justify-center space-x-2">
-                    <i data-feather="search" class="w-5 h-5"></i>
-                    <span>Analyze Lunar Surface</span>
-                </button>
-            </form>
-        </div>
-
-        <!-- ✅ Dynamic Results Section -->
-        {% if image_path %}
-        <div class="max-w-4xl mx-auto mt-16" id="results">
-            <div class="result-card rounded-2xl overflow-hidden border border-blue-800 border-opacity-50">
-                <div class="bg-gray-800 bg-opacity-70 p-6">
-                    <h3 class="text-xl font-semibold text-blue-100 flex items-center">
-                        <i data-feather="target" class="w-5 h-5 mr-2"></i>
-                        Detection Results
-                    </h3>
-                </div>
-
-                <div class="p-6 border-t border-blue-900 border-opacity-50">
-                    <div class="rounded-lg overflow-hidden border border-blue-900">
-                        <img src="{{ image_path }}" alt="Lunar surface with detected craters" class="w-full">
-                    </div>
-                    <div class="flex flex-wrap gap-4 mt-6">
-                        <a href="{{ image_path.split('?')[0] }}" download class="flex-1 py-2 px-4 bg-blue-600 hover:bg-blue-700 rounded-lg text-center flex items-center justify-center space-x-2 transition-colors">
-                            <i data-feather="download" class="w-4 h-4"></i>
-                            <span>Download Image</span>
-                        </a>
-                        {% if json_path %}
-                        <a href="{{ json_path }}" download class="flex-1 py-2 px-4 bg-indigo-600 hover:bg-indigo-700 rounded-lg text-center flex items-center justify-center space-x-2 transition-colors">
-                            <i data-feather="file-text" class="w-4 h-4"></i>
-                            <span>JSON Data</span>
-                        </a>
-                        {% endif %}
-                    </div>
+                <div class="flex items-center space-x-4">
+                    <a href="https://github.com/Mihir2811/Lunar_Crater_Detection/blob/main/README.md" class="hidden md:flex items-center space-x-2 text-sm text-slate-400 hover:text-white transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-white/5">
+                        <i data-feather="book-open" class="w-4 h-4"></i>
+                        <span>Docs</span>
+                    </a>
+                    <a href="https://github.com/Mihir2811/Lunar_Crater_Detection" class="hidden md:flex items-center space-x-2 text-sm text-slate-400 hover:text-white transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-white/5">
+                        <i data-feather="github" class="w-4 h-4"></i>
+                        <span>GitHub</span>
+                    </a>
+                    <a href="https://www.youtube.com/watch?v=P0vyWb0eBXU" class="hidden md:flex items-center space-x-2 text-sm text-slate-400 hover:text-white transition-colors duration-300 px-3 py-2 rounded-lg hover:bg-white/5">
+                        <i data-feather="youtube" class="w-4 h-4"></i>
+                        <span>Youtube</span>
+                    </a>
+                    <!-- <div class="tooltip-wrapper">
+                        <button class="flex items-center space-x-2 text-sm bg-lunar-600/20 text-lunar-300 px-4 py-2 rounded-xl hover:bg-lunar-600/30 transition-all duration-300 border border-lunar-500/20">
+                            <i data-feather="cpu" class="w-4 h-4"></i>
+                            <span class="hidden sm:inline">AI Ready</span>
+                        </button>
+                        <span class="tooltip-text glass text-white text-xs px-3 py-1.5">YOLOv8 Model Loaded</span>
+                    </div> -->
                 </div>
             </div>
-        </div>
-        {% endif %}
-    </main>
+        </nav>
 
-    <footer class="py-8 text-center text-blue-400 text-sm">
-        <div class="container mx-auto px-4">
-            <p class="mb-2">A Celestial Project Developed for SAC, ISRO</p>
-            <p>Developed with <i data-feather="heart" class="w-4 h-4 inline text-pink-400"></i> by Mihir Panchal</p>
-        </div>
-    </footer>
+        <!-- Hero Header -->
+        <header class="pt-32 pb-16 px-4 text-center initial-hidden animate-slide-up" style="animation-delay: 0.1s;">
+            <div class="max-w-4xl mx-auto">
+                <!-- Status Badge -->
+                <div class="inline-flex items-center space-x-2 bg-lunar-950/50 border border-lunar-700/30 rounded-full px-4 py-1.5 mb-8 animate-fade-in" style="animation-delay: 0.3s;">
+                    <span class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-medium text-lunar-300 tracking-wide">CRATER DETECTION ENGINE</span>
+                </div>
+
+                <!-- Main Title -->
+                <h1 class="text-6xl sm:text-7xl lg:text-8xl font-black mb-6 tracking-tight leading-none">
+                    <span class="bg-gradient-to-r from-lunar-300 via-lunar-400 to-cosmos-400 bg-clip-text text-transparent glow-text">Moon</span><span class="bg-gradient-to-r from-cosmos-300 via-cosmos-400 to-cosmos-500 bg-clip-text text-transparent">Crunch</span>
+                </h1>
+
+                <!-- Subtitle -->
+                <p class="text-lg sm:text-xl text-slate-400 max-w-2xl mx-auto mb-4 font-light leading-relaxed">
+                    MoonCrunch is a project developed to facilitate automated identification and analysis of lunar impact craters from orbital imagery. The system is intended for research, validation, and analytical workflows in planetary science and remote sensing domains. 
+                </p>
+
+                <!-- How It Works Section -->
+            <div class="max-w-4xl mx-auto mt-20 initial-hidden animate-slide-up" style="animation-delay: 0.6s;">
+                <div class="text-center mb-12">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white tracking-tight">How It Works</h2>
+                    <p class="text-slate-500 mt-2 text-sm">Three simple steps to crater detection</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <!-- Step 1 -->
+                    <div class="glass-light rounded-2xl p-8 text-center group hover:bg-white/5 transition-all duration-500 hover:-translate-y-2">
+                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-lunar-600/20 to-lunar-500/10 border border-lunar-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <span class="text-xl font-bold text-lunar-300">01</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Image Submission</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Upload lunar surface imagery acquired from orbital missions or telescopic observations.</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="glass-light rounded-2xl p-8 text-center group hover:bg-white/5 transition-all duration-500 hover:-translate-y-2">
+                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-cosmos-600/20 to-cosmos-500/10 border border-cosmos-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <span class="text-xl font-bold text-cosmos-300">02</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Automated Processing</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">The system applies a trained detection model to identify and classify crater formations.</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="glass-light rounded-2xl p-8 text-center group hover:bg-white/5 transition-all duration-500 hover:-translate-y-2">
+                        <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-600/20 to-emerald-500/10 border border-emerald-500/20 mb-5 group-hover:scale-110 transition-transform duration-300">
+                            <span class="text-xl font-bold text-emerald-300">03</span>
+                        </div>
+                        <h3 class="text-lg font-semibold text-white mb-2">Result Generation</h3>
+                        <p class="text-sm text-slate-500 leading-relaxed">Annotated imagery and structured crater metadata are generated for download and further analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+                <!-- Tech Stack Pills -->
+                <div class="flex flex-wrap justify-center gap-2 mt-8">
+                    <span class="text-xs font-mono text-slate-500 bg-slate-800/40 px-3 py-1 rounded-full border border-slate-700/30">Fine-Tuned YOLOv8 Model</span>
+                    <span class="text-xs font-mono text-slate-500 bg-slate-800/40 px-3 py-1 rounded-full border border-slate-700/30">Custom Annotated Datset</span>
+                    <span class="text-xs font-mono text-slate-500 bg-slate-800/40 px-3 py-1 rounded-full border border-slate-700/30">Ultralytics</span>
+                    <span class="text-xs font-mono text-slate-500 bg-slate-800/40 px-3 py-1 rounded-full border border-slate-700/30">Flask API</span>
+                </div>
+
+                <!-- Animated Moon Icon -->
+                <div class="mt-10 relative inline-block">
+                    <div class="w-20 h-20 moon-surface rounded-full mx-auto animate-float relative">
+                        <div class="crater w-4 h-4" style="top: 20%; left: 50%;"></div>
+                        <div class="crater w-3 h-3" style="top: 55%; left: 25%;"></div>
+                        <div class="crater w-2 h-2" style="top: 40%; left: 70%;"></div>
+                        <div class="crater w-2.5 h-2.5" style="top: 70%; left: 55%;"></div>
+                        <div class="crater w-1.5 h-1.5" style="top: 30%; left: 35%;"></div>
+                    </div>
+                    <!-- Orbit ring -->
+                    <div class="absolute inset-0 w-20 h-20 mx-auto border border-lunar-500/20 rounded-full animate-spin-slow" style="width: 140px; height: 140px; top: -30px; left: 50%; margin-left: -70px;"></div>
+                    <!-- Orbiting dot -->
+                    <div class="absolute top-1/2 left-1/2 w-2 h-2 bg-cosmos-400 rounded-full animate-orbit" style="margin-top: -4px; margin-left: -4px;"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="flex-grow container mx-auto px-4 pb-16">
+
+            <!-- Stats Bar -->
+            <!-- <div class="max-w-4xl mx-auto mb-12 initial-hidden animate-slide-up" style="animation-delay: 0.3s;">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="glass-light rounded-2xl p-4 text-center group hover:bg-white/5 transition-all duration-300">
+                        <div class="text-2xl font-bold text-lunar-300 group-hover:text-lunar-200 transition-colors">98.7%</div>
+                        <div class="text-xs text-slate-500 mt-1">Accuracy</div>
+                    </div>
+                    <div class="glass-light rounded-2xl p-4 text-center group hover:bg-white/5 transition-all duration-300">
+                        <div class="text-2xl font-bold text-cosmos-300 group-hover:text-cosmos-200 transition-colors">50K+</div>
+                        <div class="text-xs text-slate-500 mt-1">Craters Detected</div>
+                    </div>
+                    <div class="glass-light rounded-2xl p-4 text-center group hover:bg-white/5 transition-all duration-300">
+                        <div class="text-2xl font-bold text-purple-300 group-hover:text-purple-200 transition-colors">&lt;2s</div>
+                        <div class="text-xs text-slate-500 mt-1">Processing Time</div>
+                    </div>
+                    <div class="glass-light rounded-2xl p-4 text-center group hover:bg-white/5 transition-all duration-300">
+                        <div class="text-2xl font-bold text-emerald-300 group-hover:text-emerald-200 transition-colors">SAC</div>
+                        <div class="text-xs text-slate-500 mt-1">ISRO Partner</div>
+                    </div>
+                </div>
+            </div> -->
+
+            <!-- Upload Card -->
+            <div class="max-w-3xl mx-auto initial-hidden animate-slide-up" style="animation-delay: 0.4s;">
+                <div class="glass rounded-3xl p-8 sm:p-10 glow-indigo">
+                    
+                    <!-- Card Header -->
+<div class="text-center mb-10">
+    <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-lunar-600/30 to-cosmos-600/30 border border-lunar-500/20 mb-5">
+        <i data-feather="upload-cloud" class="w-7 h-7 text-lunar-300"></i>
+    </div>
+    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-2 tracking-tight">
+        Upload Lunar Surface Image
+    </h2>
+    <p class="text-slate-400 text-sm sm:text-base">
+        Submit high-resolution lunar imagery for automated crater detection.
+    </p>
+</div>
+
+                    <!-- Flask Form -->
+                    <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data" class="space-y-8">
+                        
+                        <!-- Upload Zone -->
+                        <div id="uploadZone" class="upload-zone relative border-2 border-dashed border-slate-600/50 rounded-2xl p-10 sm:p-14 text-center cursor-pointer bg-slate-800/20 hover:bg-slate-800/40">
+                            <input type="file" name="image" id="fileInput" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" accept="image/*" required>
+                            
+                            <div id="uploadContent" class="space-y-4 transition-all duration-300">
+                                <!-- Default state -->
+                                <div id="defaultUpload">
+                                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-lunar-950/50 border border-lunar-700/30 mb-4">
+                                        <i data-feather="image" class="w-8 h-8 text-lunar-400"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-slate-200">Drag & Drop or Click to Browse</h3>
+                                    <p class="text-sm text-slate-500 mt-2">Supports JPG, PNG, TIFF • Max 10MB</p>
+                                    <div class="flex items-center justify-center space-x-3 mt-4">
+                                        <!-- <div class="flex items-center space-x-1.5 text-xs text-slate-600">
+                                            <i data-feather="shield" class="w-3 h-3"></i>
+                                            <span>Secure Upload</span>
+                                        </div>
+                                        <div class="w-1 h-1 bg-slate-700 rounded-full"></div>
+                                        <div class="flex items-center space-x-1.5 text-xs text-slate-600">
+                                            <i data-feather="zap" class="w-3 h-3"></i>
+                                            <span>Instant Processing</span>
+                                        </div> -->
+                                    </div>
+                                </div>
+
+                                <!-- File selected state -->
+                                <div id="fileSelected" class="hidden">
+                                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-green-950/50 border border-green-700/30 mb-4">
+                                        <i data-feather="check-circle" class="w-8 h-8 text-green-400"></i>
+                                    </div>
+                                    <h3 class="text-lg font-semibold text-green-300">File Ready</h3>
+                                    <p id="fileName" class="text-sm text-slate-400 mt-2 font-mono"></p>
+                                    <p id="fileSize" class="text-xs text-slate-600 mt-1"></p>
+                                </div>
+                            </div>
+
+                            <!-- Image Preview -->
+                            <div id="imagePreview" class="hidden mt-6">
+                                <div class="relative inline-block rounded-xl overflow-hidden border border-slate-600/30 shadow-2xl max-w-sm mx-auto">
+                                    <img id="previewImg" src="" alt="Preview" class="w-full h-auto">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-void-900/60 to-transparent"></div>
+                                    <button type="button" id="removeFile" class="absolute top-3 right-3 w-8 h-8 bg-red-500/80 hover:bg-red-500 rounded-full flex items-center justify-center transition-colors z-20">
+                                        <i data-feather="x" class="w-4 h-4"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Confidence Slider -->
+                        <div class="glass-light rounded-2xl p-6 sm:p-8">
+                            <div class="flex items-center justify-between mb-5">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-8 h-8 rounded-lg bg-lunar-950/50 border border-lunar-700/30 flex items-center justify-center">
+                                        <i data-feather="sliders" class="w-4 h-4 text-lunar-400"></i>
+                                    </div>
+                                    <div>
+                                        <label for="confidence" class="block text-sm font-semibold text-slate-200">Detection Sensitivity</label>
+                                        <p class="text-xs text-slate-500 mt-0.5">Adjust the confidence threshold</p>
+                                    </div>
+                                </div>
+                                <div class="bg-lunar-950/50 border border-lunar-700/30 rounded-xl px-4 py-2">
+                                    <span id="confValue" class="text-lunar-300 font-mono font-bold text-lg">0.50</span>
+                                </div>
+                            </div>
+
+                            <div class="relative pt-2 pb-1">
+                                <input type="range" id="confidence" name="confidence" min="0.1" max="1.0" step="0.05" value="0.5" 
+                                       class="w-full cursor-pointer">
+                                <!-- Gradient track indicator -->
+                                <div class="flex justify-between mt-3">
+                                    <div class="flex items-center space-x-1.5">
+                                        <div class="w-2 h-2 rounded-full bg-amber-500/50"></div>
+                                        <span class="text-xs text-slate-500">More Detections</span>
+                                    </div>
+                                    <div class="flex items-center space-x-1.5">
+                                        <span class="text-xs text-slate-500">Higher Precision</span>
+                                        <div class="w-2 h-2 rounded-full bg-emerald-500/50"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Quick presets -->
+                            <div class="flex gap-2 mt-4">
+                                <button type="button" class="conf-preset flex-1 text-xs py-2 px-3 rounded-lg bg-slate-800/40 text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200 border border-slate-700/20" data-value="0.25">
+                                    Low (0.25)
+                                </button>
+                                <button type="button" class="conf-preset flex-1 text-xs py-2 px-3 rounded-lg bg-lunar-900/30 text-lunar-300 border border-lunar-700/30 transition-all duration-200" data-value="0.50">
+                                    Medium (0.50)
+                                </button>
+                                <button type="button" class="conf-preset flex-1 text-xs py-2 px-3 rounded-lg bg-slate-800/40 text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all duration-200 border border-slate-700/20" data-value="0.75">
+                                    High (0.75)
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" id="submitBtn" class="btn-primary w-full py-4 px-8 bg-gradient-to-r from-lunar-600 via-lunar-500 to-cosmos-600 rounded-2xl font-semibold text-white text-base flex items-center justify-center space-x-3 shadow-lg shadow-lunar-600/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                            <span id="btnIcon">
+                                <i data-feather="search" class="w-5 h-5"></i>
+                            </span>
+                            <span id="btnText">Analyze Lunar Surface</span>
+                        </button>
+
+                        <!-- Info note -->
+                        <div class="flex items-start space-x-3 text-xs text-slate-600">
+                            <i data-feather="info" class="w-4 h-4 flex-shrink-0 mt-0.5"></i>
+                            <p>Your image will be processed using our YOLOv8-based crater detection model. Results include annotated images and JSON metadata with crater coordinates and confidence scores.</p>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Results Section (Dynamic - Flask/Jinja2) -->
+            {% if image_path %}
+            <div class="max-w-4xl mx-auto mt-16 animate-scale-in" id="results">
+                <div class="result-card glass rounded-3xl overflow-hidden glow-indigo">
+                    
+                    <!-- Results Header -->
+                    <div class="px-8 py-6 border-b border-lunar-800/30">
+                        <div class="flex items-center justify-between flex-wrap gap-4">
+                            <div class="flex items-center space-x-3">
+                                <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-600/30 to-green-600/30 border border-emerald-500/20 flex items-center justify-center">
+                                    <i data-feather="check-circle" class="w-5 h-5 text-emerald-400"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-xl font-bold text-white">Detection Complete</h3>
+                                    <p class="text-xs text-slate-500 mt-0.5">Analysis results ready</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs font-mono text-emerald-400 bg-emerald-950/40 px-3 py-1.5 rounded-full border border-emerald-700/30 flex items-center space-x-1.5">
+                                    <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
+                                    <span>Success</span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Results Body -->
+                    <div class="p-8">
+                        <!-- Detected Image -->
+                        <div class="rounded-2xl overflow-hidden border border-slate-700/30 shadow-2xl mb-8 group">
+                            <div class="relative">
+                                <img src="{{ image_path }}" alt="Lunar surface with detected craters" class="w-full h-auto">
+                                <div class="absolute inset-0 bg-gradient-to-t from-void-900/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                            </div>
+                        </div>
+
+                        <!-- Download Actions -->
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <a href="{{ image_path.split('?')[0] }}" download 
+                               class="group flex items-center justify-center space-x-3 py-4 px-6 bg-gradient-to-r from-cosmos-700/30 to-cosmos-600/20 hover:from-cosmos-700/50 hover:to-cosmos-600/40 rounded-2xl border border-cosmos-600/20 hover:border-cosmos-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-cosmos-600/10">
+                                <div class="w-10 h-10 rounded-xl bg-cosmos-950/50 border border-cosmos-700/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <i data-feather="download" class="w-5 h-5 text-cosmos-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <span class="block text-sm font-semibold text-white">Download Image</span>
+                                    <span class="block text-xs text-slate-500">Annotated result</span>
+                                </div>
+                            </a>
+
+                            {% if json_path %}
+                            <a href="{{ json_path }}" download 
+                               class="group flex items-center justify-center space-x-3 py-4 px-6 bg-gradient-to-r from-lunar-700/30 to-lunar-600/20 hover:from-lunar-700/50 hover:to-lunar-600/40 rounded-2xl border border-lunar-600/20 hover:border-lunar-500/40 transition-all duration-300 hover:shadow-lg hover:shadow-lunar-600/10">
+                                <div class="w-10 h-10 rounded-xl bg-lunar-950/50 border border-lunar-700/30 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <i data-feather="file-text" class="w-5 h-5 text-lunar-400"></i>
+                                </div>
+                                <div class="text-left">
+                                    <span class="block text-sm font-semibold text-white">JSON Data</span>
+                                    <span class="block text-xs text-slate-500">Crater coordinates</span>
+                                </div>
+                            </a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            
+        </main>
+
+        <!-- Footer -->
+        <footer class="py-10 border-t border-slate-800/50">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-8 h-8 moon-surface rounded-full">
+                                <div class="crater w-1.5 h-1.5" style="top: 25%; left: 55%;"></div>
+                                <div class="crater w-1 h-1" style="top: 55%; left: 30%;"></div>
+                            </div>
+                            <span class="text-sm font-semibold">
+                                <span class="text-lunar-400">Moon</span><span class="text-cosmos-400">Crunch</span>
+                            </span>
+                        </div>
+
+                        <div class="text-center md:text-left">
+                            <p class="text-sm text-slate-500">
+                                A Celestial Project for <span class="text-lunar-400 font-medium">SAC, ISRO</span>
+                            </p>
+                            <p class="text-sm text-slate-600 mt-1">
+                                Developed by
+                                <span class="text-slate-400 font-medium">Mihir Panchal</span>
+                            </p>
+                        </div>
+
+                        <div class="flex items-center space-x-3">
+                            <a href="https://github.com/Mihir2811/Lunar_Crater_Detection" class="w-9 h-9 rounded-xl bg-slate-800/50 border border-slate-700/30 flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-700/50 transition-all duration-300">
+                                <i data-feather="github" class="w-4 h-4"></i>
+                            </a>
+                            <a href="https://www.linkedin.com/in/mihirpanchal28/" class="w-9 h-9 rounded-xl bg-slate-800/50 border border-slate-700/30 flex items-center justify-center text-slate-500 hover:text-white hover:bg-slate-700/50 transition-all duration-300">
+                                <i data-feather="linkedin" class="w-4 h-4"></i>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-slate-800/30 text-center">
+                        <p class="text-xs text-slate-700">© 2026 MoonCrunch. All rights reserved. Built for scientific exploration.</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
 
     <script>
-        // Initialize Vanta.js
-        VANTA.GLOBE({
-            el: "#vanta-bg",
-            mouseControls: true,
-            touchControls: true,
-            gyroControls: false,
-            minHeight: 200.00,
-            minWidth: 200.00,
-            scale: 1.00,
-            scaleMobile: 1.00,
-            color: 0x3a86ff,
-            backgroundColor: 0x111827,
-            size: 0.8
-        });
-
-        // Confidence slider display
-        document.getElementById('confidence').addEventListener('input', function() {
-            document.getElementById('confValue').textContent = this.value;
-        });
-
-        // Feather icons
+        // Initialize Feather Icons
         feather.replace();
+
+        // Create animated star field
+        function createStarfield() {
+            const container = document.getElementById('starfield');
+            const starCount = 150;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 2.5 + 0.5 + 'px';
+                star.style.height = star.style.width;
+                star.style.opacity = Math.random() * 0.7 + 0.1;
+                star.style.animation = `twinkle ${Math.random() * 4 + 2}s ease-in-out ${Math.random() * 4}s infinite`;
+                container.appendChild(star);
+            }
+
+            // Add shooting stars
+            setInterval(() => {
+                const meteor = document.createElement('div');
+                meteor.style.position = 'absolute';
+                meteor.style.width = '2px';
+                meteor.style.height = '2px';
+                meteor.style.background = 'linear-gradient(45deg, white, transparent)';
+                meteor.style.borderRadius = '50%';
+                meteor.style.boxShadow = '0 0 6px 2px rgba(255,255,255,0.3)';
+                meteor.style.left = Math.random() * 100 + '%';
+                meteor.style.top = Math.random() * 50 + '%';
+                meteor.style.animation = `meteor ${Math.random() * 2 + 1.5}s linear forwards`;
+                container.appendChild(meteor);
+                setTimeout(() => meteor.remove(), 3500);
+            }, 4000);
+        }
+
+        createStarfield();
+
+        // Trigger initial animations
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.initial-hidden').forEach(el => {
+                el.style.opacity = '1';
+            });
+        });
+
+        // File upload handling
+        const fileInput = document.getElementById('fileInput');
+        const uploadZone = document.getElementById('uploadZone');
+        const defaultUpload = document.getElementById('defaultUpload');
+        const fileSelected = document.getElementById('fileSelected');
+        const imagePreview = document.getElementById('imagePreview');
+        const previewImg = document.getElementById('previewImg');
+        const removeFileBtn = document.getElementById('removeFile');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+
+        fileInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                defaultUpload.classList.add('hidden');
+                fileSelected.classList.remove('hidden');
+                fileName.textContent = file.name;
+                fileSize.textContent = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+                // Image preview
+                const reader = new FileReader();
+                reader.onload = function(ev) {
+                    previewImg.src = ev.target.result;
+                    imagePreview.classList.remove('hidden');
+                };
+                reader.readAsDataURL(file);
+
+                uploadZone.classList.add('border-green-500/50');
+                uploadZone.classList.remove('border-slate-600/50');
+            }
+        });
+
+        // Remove file
+        removeFileBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            fileInput.value = '';
+            defaultUpload.classList.remove('hidden');
+            fileSelected.classList.add('hidden');
+            imagePreview.classList.add('hidden');
+            previewImg.src = '';
+            uploadZone.classList.remove('border-green-500/50');
+            uploadZone.classList.add('border-slate-600/50');
+        });
+
+        // Drag and drop visual feedback
+        uploadZone.addEventListener('dragenter', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        // Confidence slider
+        const confidenceSlider = document.getElementById('confidence');
+        const confValue = document.getElementById('confValue');
+
+        confidenceSlider.addEventListener('input', function() {
+            confValue.textContent = parseFloat(this.value).toFixed(2);
+        });
+
+        // Confidence presets
+        document.querySelectorAll('.conf-preset').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const value = this.dataset.value;
+                confidenceSlider.value = value;
+                confValue.textContent = parseFloat(value).toFixed(2);
+
+                // Update active styling
+                document.querySelectorAll('.conf-preset').forEach(b => {
+                    b.classList.remove('bg-lunar-900/30', 'text-lunar-300', 'border-lunar-700/30');
+                    b.classList.add('bg-slate-800/40', 'text-slate-400', 'border-slate-700/20');
+                });
+                this.classList.remove('bg-slate-800/40', 'text-slate-400', 'border-slate-700/20');
+                this.classList.add('bg-lunar-900/30', 'text-lunar-300', 'border-lunar-700/30');
+            });
+        });
+
+        // Form submission with loading state
+        document.getElementById('uploadForm').addEventListener('submit', function() {
+            const btn = document.getElementById('submitBtn');
+            const btnIcon = document.getElementById('btnIcon');
+            const btnText = document.getElementById('btnText');
+
+            btn.disabled = true;
+            btnIcon.innerHTML = '<div class="spinner"></div>';
+            btnText.textContent = 'Processing...';
+        });
+
+        // Smooth scroll to results if present
+        const results = document.getElementById('results');
+        if (results) {
+            setTimeout(() => {
+                results.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 500);
+        }
     </script>
 </body>
 </html>
